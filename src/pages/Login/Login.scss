@@ -1,0 +1,56 @@
+
+.pwd-container-grid {
+  user-select: none;
+  display: grid;
+  width: 100vw;
+  height: 100vh;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+}
+
+.pwd-input-container {
+  text-align: center;
+  grid-column: 1/4;
+  position: relative;
+
+  .pwd-input {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    text-align: center;
+    background-color: transparent;
+    border: none;
+    font-size: 30px;
+    letter-spacing: 10px;
+  }
+}
+.pwd-grid-item {
+  $bgColor: white;
+  position: relative;
+  background-color: $bgColor;
+  outline: none;
+  border: none;
+
+  &:hover {
+    background-color: darken($bgColor, 20%);
+  }
+
+  .pwd-grid-item-number, .pwd-grid-item-delete {
+    position: absolute;
+    color: #1d1d1d;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .pwd-grid-item-number {
+    font-size: 28px;
+    font-weight: bold;
+  }
+
+  .pwd-grid-item-delete {
+    font-size: 18px;
+  }
+
+}
