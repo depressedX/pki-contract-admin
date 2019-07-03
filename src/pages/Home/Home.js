@@ -69,6 +69,14 @@ export function HomePage() {
         },
     ])
 
+
+    React.useEffect(()=>{
+        document.title = '用户管理程序'
+        alert(localStorage.getItem('uid')+'  '+localStorage.getItem('token'))
+
+    },[])
+
+
     return (
         <>
             <h1>管理员 {'Lph'}</h1>

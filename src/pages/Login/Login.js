@@ -1,8 +1,9 @@
 import {default as React, useState} from 'react'
 import './Login.scss'
 import classNames from 'classnames'
+import CryptoJs from 'crypto-js'
 
-function usePassword(maxLength=6) {
+function usePassword(maxLength = 6) {
     function deleteOne() {
         setText(prev => prev.slice(0, prev.length - 1))
     }
@@ -12,19 +13,66 @@ function usePassword(maxLength=6) {
         setText(prev => prev + key)
     }
 
+    function clear() {
+        setText('')
+    }
+
     const [text, setText] = useState('')
 
-    return [text, inputOne, deleteOne]
+    return [text, inputOne, deleteOne,clear]
 }
 
 export function LoginPage() {
 
     const maxLength = 6
-    const [pwd, inputOne, deleteOne] = usePassword(maxLength)
+    const [pwd, inputOne, deleteOne, clear] = usePassword(maxLength)
+
+    // 完成输入  进行验证
+    function finishInput() {
+
+
+        const fs = window.require('fs')
+        const data = fs.readFileSync('passport.key')
+        const bytes = CryptoJs.AES.decrypt(data.toString(), pwd)
+        let decrypted = bytes.toString(CryptoJs.enc.Utf8)
+
+        let sepIndex = decrypted.indexOf('.')
+
+        if (sepIndex === -1) {
+            alert('密钥文件已损坏或输入了错误的PIN码！')
+            clear()
+        } else {
+            let uid = decrypted.slice(0, sepIndex)
+            let token = decrypted.slice(sepIndex + 1)
+
+            // 向主进程发送消息，表示已获得PIN码。该页面任务执行完毕
+            const {ipcRenderer} = window.require('electron')
+            localStorage.setItem('uid', uid)
+            localStorage.setItem('token', token)
+            ipcRenderer.send('onVerified')
+        }
+
+
+    }
 
     if (pwd.length === maxLength) {
-        alert('输入完成')
+
+        finishInput()
     }
+
+    React.useEffect(() => {
+        document.title = '输入PIN码'
+    }, [])
+
+    // 检查密钥文件是否存在
+    const fs = window.require('fs')
+    const {remote} = window.require('electron')
+    fs.exists('passport.key', function (exists) {
+        if (!exists) {
+            alert('请将密钥放在根目录')
+            remote.getCurrentWindow().close()
+        }
+    })
 
     return (
         <>

@@ -1,5 +1,6 @@
 
 .pwd-container-grid {
+  overflow: hidden;
   user-select: none;
   display: grid;
   width: 100vw;
@@ -12,6 +13,7 @@
   text-align: center;
   grid-column: 1/4;
   position: relative;
+  border-bottom: 1px solid black;
 
   .pwd-input {
     position: absolute;

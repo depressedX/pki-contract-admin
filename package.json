@@ -1,10 +1,16 @@
 {
   "name": "pki-contract-admin",
+  "description": "contract admin system",
+  "author": {
+    "name": "lph",
+    "email": "yuri8023@qq.com"
+  },
   "version": "0.1.0",
   "private": true,
-  "main": "main.js",
+  "main": "./public/electron.js",
   "dependencies": {
     "classnames": "^2.2.6",
+    "crypto-js": "^3.1.9-1",
     "node-sass": "^4.12.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
@@ -16,7 +22,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "start-electron": "electron ."
+    "start-electron": "electron .",
+    "build-electron": "electron-builder --win --x64"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -34,6 +41,11 @@
     ]
   },
   "devDependencies": {
-    "electron": "^5.0.6"
+    "electron": "^5.0.6",
+    "electron-builder": "^20.44.4",
+    "typescript": "^3.5.2"
+  },
+  "build": {
+    "appId": "com.lph.contractAdmin"
   }
 }
