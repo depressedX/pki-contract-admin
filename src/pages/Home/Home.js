@@ -1,4 +1,5 @@
 import React from 'react'
+import {$http, acceptUser, declineUser, getUnauthorizedUsers, login} from "../../API";
 
 function AccountItem({name, cardID, id, onAccept, onDecline}) {
     return <tr>
@@ -14,73 +15,85 @@ function AccountItem({name, cardID, id, onAccept, onDecline}) {
 export function HomePage() {
 
     function accept(id) {
-        setList(prev => {
+        acceptUser(id).then(() => {
 
-            let i = toBeHandledAccountList.findIndex(v => v.id === id)
-            if (i === -1) {
-                return prev
-            }
-            return prev.slice(0, i).concat(prev.slice(i + 1))
+            setList(prev => {
+
+                let i = toBeHandledAccountList.findIndex(v => v.id === id)
+                if (i === -1) {
+                    return prev
+                }
+                return prev.slice(0, i).concat(prev.slice(i + 1))
+            })
+        }, e => {
+
+            alert(`出现错误：${JSON.stringify(e)}`)
+
+            const {remote} = window.require('electron')
+            remote.getCurrentWindow().close()
         })
     }
 
     function decline(id) {
 
-        setList(prev => {
+        declineUser(id).then(() => {
 
-            let i = toBeHandledAccountList.findIndex(v => v.id === id)
-            if (i === -1) {
-                return prev
-            }
-            return prev.slice(0, i).concat(prev.slice(i + 1))
+            setList(prev => {
+
+                let i = toBeHandledAccountList.findIndex(v => v.id === id)
+                if (i === -1) {
+                    return prev
+                }
+                return prev.slice(0, i).concat(prev.slice(i + 1))
+            })
+        }, e => {
+
+            alert(`出现错误：${JSON.stringify(e)}`)
+
+            const {remote} = window.require('electron')
+            remote.getCurrentWindow().close()
         })
     }
 
-    const [toBeHandledAccountList, setList] = React.useState([
-        {
-            id: 1,
-            name: '诸葛亮',
-            cardID: '370523199020191211',
-            timestamp: Date.now()
-        },
-        {
-            id: 2,
-            name: '貂蝉',
-            cardID: '370523199020191211',
-            timestamp: Date.now()
-        },
-        {
-            id: 3,
-            name: '海尔兄弟',
-            cardID: '370523199020191211',
-            timestamp: Date.now()
-        },
-        {
-            id: 4,
-            name: '牙签',
-            cardID: '370523199020191211',
-            timestamp: Date.now()
-        },
-        {
-            id: 5,
-            name: '火柴人',
-            cardID: '370523199020191211',
-            timestamp: Date.now()
-        },
-    ])
+    const [toBeHandledAccountList, setList] = React.useState([])
 
-
-    React.useEffect(()=>{
+    React.useEffect(() => {
         document.title = '用户管理程序'
-        alert(localStorage.getItem('uid')+'  '+localStorage.getItem('token'))
+        alert(localStorage.getItem('uid') + '  ' + localStorage.getItem('token'))
 
-    },[])
+        const id = localStorage.getItem('uid')
+        const password = localStorage.getItem('token')
+
+        login(id, password).then(getUnauthorizedUsers).then(data => {
+            setList(data)
+        }).catch(e => {
+            alert(`出现错误：${JSON.stringify(e)}`)
+
+            const {remote} = window.require('electron')
+            remote.getCurrentWindow().close()
+        })
+
+    }, [])
+
+    function refresh() {
+        setList([])
+        getUnauthorizedUsers().then(data => {
+            setList(data)
+        }).catch(e => {
+            alert(`出现错误：${JSON.stringify(e)}`)
+
+            const {remote} = window.require('electron')
+            remote.getCurrentWindow().close()
+        })
+    }
 
 
     return (
         <>
             <h1>管理员 {'Lph'}</h1>
-            <h2>待处理账号列表<button>刷新</button></h2>
+            <h2>待处理账号列表
+                <button onClick={refresh}>刷新</button>
+            </h2>
             {toBeHandledAccountList.length > 0 ? <table cellPadding={10}>
                 <thead>
                 <tr>

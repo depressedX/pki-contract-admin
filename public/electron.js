@@ -57,7 +57,7 @@ function createMainWindow() {
     })
 
     // 打开开发者工具
-    // mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools()
 
     // 当 window 被关闭，这个事件会被触发。
     mainWindow.on('closed', () => {
